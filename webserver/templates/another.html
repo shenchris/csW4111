@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Query System</title>
+    <style>
+        .container { width: 80%; margin: 20px auto; }
+        .search-bar, .sort-options { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        .borrow-button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Library Query System Table: {{ name }}</h1>
+        <!-- Search Form with Dropdowns for Search By and Sort By Options -->
+        <form class="search-bar" method="get" action="/another">
+            <label for="search_by">Table name</label>
+            <select id="search_by" name="search_by">
+                <option value="Users">Users</option>
+                <option value="Library">Library</option>
+                <option value="Access" >Access</option>
+                <option value="Staff" >Staff</option>
+                <option value="Staff_belong_Library" >Staff_belong_Library</option>
+                <option value="Study_Room">Study_Room</option>
+                <option value="Book_Study_Room" >Book_Study_Room</option>
+                <option value="Book" >Book</option>
+                <option value="Store">Store</option>
+                <option value="Loan_Record">Loan_Record</option>
+                <option value="user_loan_record">user_loan_record</option>
+                <option value="publisher">publisher</option>
+                <option value="Book_Publisher">Book_Publisher</option>
+                <option value="Retailer">Retailer</option>
+                <option value="orders" >orders</option>
+                <option value="manage">manage</option>
+                <option value="Category" >Category</option>
+                <option value="Book_Category" >Book_Category</option>
+                <option value="subcategory">subcategory</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Book Table with Sorting Headers -->
+        <table>
+            <thead>
+                <tr>
+                    {% for key in keys %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in data %}
+                <tr>
+                    {% for info in book %}
+                    <td>{{ info }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function borrowBook(bookId) {
+            alert(`Borrowing book with ID: ${bookId}`);
+            // Here you could send an AJAX request to borrow the book
+        }
+    </script>
+</body>
+</html>

@@ -1,29 +1,80 @@
-<html>
-  <style>
-    body{ 
-      font-size: 15pt;
-      font-family: arial;
-    }
-  </style>
-
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Query System</title>
+    <style>
+        .container { width: 80%; margin: 20px auto; }
+        .search-bar, .sort-options { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        .borrow-button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
 <body>
-  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
+    <div class="container">
+        <h1>Library Query System</h1>
 
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
+        <!-- Search Form with Dropdowns for Search By and Sort By Options -->
+        <form class="search-bar" method="get" action="/">
+            <label for="search">Search Book:</label>
+            <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Enter search term">
 
-<p><a href="/another">Go to the other page</a></p>
+            <!-- Dropdown to select search by criteria -->
+            <label for="search_by">Search By:</label>
+            <select id="search_by" name="search_by">
+                <option value="Name" {% if search_by == 'Name' %}selected{% endif %}>Name</option>
+                <option value="Author" {% if search_by == 'Author' %}selected{% endif %}>Author</option>
+            </select>
 
-<form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
+            <!-- Dropdown to select sort by criteria -->
+            <label for="sort_by">Sort By:</label>
+            <select id="sort_by" name="sort_by">
+                <option value="Popularity" {% if sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>
+                <option value="Quantity" {% if sort_by == 'Quantity' %}selected{% endif %}>Quantity</option>
+                <option value="Name" {% if sort_by == 'Name' %}selected{% endif %}>Name</option>
+            </select>
 
+            <!-- Sort order (ascending or descending) -->
+            <label for="order">Order:</label>
+            <select id="order" name="order">
+                <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
+                <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+            </select>
+
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Book Table with Sorting Headers -->
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Quantity</th>
+                    <th>Name</th>
+                    <th>Author</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for book in data %}
+                <tr>
+                    {% for info in book %}
+                    <td>{{ info }}</td>
+                    {% endfor %}
+                    <td><button class="borrow-button" onclick="borrowBook({{ book.BID }})">Borrow</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function borrowBook(bookId) {
+            alert(`Borrowing book with ID: ${bookId}`);
+            // Here you could send an AJAX request to borrow the book
+        }
+    </script>
 </body>
-
-
 </html>
