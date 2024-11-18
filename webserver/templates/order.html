@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Query System</title>
+    <style>
+        .container { width: 80%; margin: 20px auto; }
+        .search-bar, .sort-options { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        .borrow-button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Library Query System</h1>
+        <div class="navigation">
+            <a href="/">Home</a> |
+            <a href="/user_loan">user_loan</a> |
+            <a href="/study_room">study_room</a> |
+            <a href="/another">another</a>
+        </div>
+
+        <!-- Search Form with Dropdowns for Search By and Sort By Options -->
+        <form class="search-bar" method="post" action="/make_order">
+            <label for="sid">sid:</label>
+            <input type="number" id="sid" name="sid" placeholder="Enter sid" required>
+            <label for="bid">bid:</label>
+            <input type="number" id="bid" name="bid" placeholder="Enter bid" required>
+            <label for="rid">rid:</label>
+            <input type="number" id="rid" name="rid" placeholder="Enter rid" required>
+            <label for="lid">lid:</label>
+            <input type="number" id="lid" name="lid" placeholder="Enter lid" required>
+            <label for="price">price:</label>
+            <input type="number" id="price" name="price" placeholder="Enter price" required>
+            <label for="quantity">quantity:</label>
+            <input type="number" id="quantity" name="quantity" placeholder="Enter quantity" required>
+            <label for="date">UID:</label>
+            <input type="date" id="date" name="date" required>
+            <button type="submit">make order</button>
+        </form>
+
+
+        <!-- Book Table with Sorting Headers -->
+        <table>
+            <thead>
+                    {% for key in keys %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+            </thead>
+            <tbody>
+                {% for book in data %}
+                <tr>
+                    {% for info in book %}
+                    <td>{{ info }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

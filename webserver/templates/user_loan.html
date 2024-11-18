@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Query System</title>
+    <style>
+        .container { width: 80%; margin: 20px auto; }
+        .search-bar, .sort-options { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        .Return-button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Library Query System</h1>
+        <div class="navigation">
+            <a href="/">Home</a> |
+            <a href="/user_loan">user_loan</a> |
+            <a href="/study_room">study_room</a> |
+            <a href="/another">another</a>
+        </div>
+        <form class="search-bar" method="post" action="/user_loan">
+        <label for="UID">UID:</label>
+        <input type="number" id="UID" name="UID" value="{{ UID }}" placeholder="Enter UID for borrow book">
+        <button type="submit">Search</button>
+        </form>
+        <!-- Book Table with Sorting Headers -->
+        <table>
+            <thead>
+                    {% for key in keys %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                    <th> Action </th>
+            </thead>
+            <tbody>
+                {% for book in data %}
+                <tr>
+                    {% for info in book %}
+                    <td>{{ info }}</td>
+                    {% endfor %}
+                    <td><button class="Return-button" onclick="returnBook({{ book[2] }})">Return</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+<script>
+        // Function to handle the Borrow button click event
+        function returnBook(loan_id) {
+
+            // Send the POST request with UID and BID (book ID)
+            fetch('/return', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    loan_id: loan_id,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Book returned successfully!');
+                    // Optionally refresh the page or update the UI
+                } else {
+                    alert('Failed to returned the book!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while returning the book.');
+            });
+        }
+    </script>
+</body>
+</html>

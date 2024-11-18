@@ -15,47 +15,55 @@
 <body>
     <div class="container">
         <h1>Library Query System</h1>
+        <div class="navigation">
+            <a href="/">Home</a> |
+            <a href="/user_loan">user_loan</a> |
+            <a href="/study_room">study_room</a> |
+            <a href="/another">another</a>
+        </div>
 
         <!-- Search Form with Dropdowns for Search By and Sort By Options -->
-        <form class="search-bar" method="get" action="/">
+        <form class="search-bar" method="post" action="/">
             <label for="search">Search Book:</label>
             <input type="text" id="search" name="search" value="{{ search_query }}" placeholder="Enter search term">
 
             <!-- Dropdown to select search by criteria -->
             <label for="search_by">Search By:</label>
             <select id="search_by" name="search_by">
-                <option value="Name" {% if search_by == 'Name' %}selected{% endif %}>Name</option>
-                <option value="Author" {% if search_by == 'Author' %}selected{% endif %}>Author</option>
+                <option value="Book.name">Book.name</option>
+                <option value="Author" >Author</option>
+                <option value="Category.name" >category.name</option>
+                <option value="Publisher.name" >publisher.name</option>
             </select>
 
             <!-- Dropdown to select sort by criteria -->
             <label for="sort_by">Sort By:</label>
             <select id="sort_by" name="sort_by">
-                <option value="Popularity" {% if sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>
-                <option value="Quantity" {% if sort_by == 'Quantity' %}selected{% endif %}>Quantity</option>
-                <option value="Name" {% if sort_by == 'Name' %}selected{% endif %}>Name</option>
+{#                <option value="Popularity" {% if sort_by == 'Popularity' %}selected{% endif %}>Popularity</option>#}
+                <option value="Copy" >Copy</option>
+                <option value="Name" >Name</option>
+                <option value="BID">BID</option>
             </select>
 
             <!-- Sort order (ascending or descending) -->
             <label for="order">Order:</label>
             <select id="order" name="order">
-                <option value="asc" {% if sort_order == 'asc' %}selected{% endif %}>Ascending</option>
-                <option value="desc" {% if sort_order == 'desc' %}selected{% endif %}>Descending</option>
+                <option value="asc">Ascending</option>
+                <option value="desc">Descending</option>
             </select>
 
             <button type="submit">Search</button>
         </form>
+        <label for="UID">UID:</label>
+        <input type="number" id="UID" name="UID" value="{{ UID }}" placeholder="Enter UID for borrow book">
 
         <!-- Book Table with Sorting Headers -->
         <table>
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Quantity</th>
-                    <th>Name</th>
-                    <th>Author</th>
-                    <th>Action</th>
-                </tr>
+                    {% for key in keys %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                    <th> Action </th>
             </thead>
             <tbody>
                 {% for book in data %}
@@ -63,17 +71,46 @@
                     {% for info in book %}
                     <td>{{ info }}</td>
                     {% endfor %}
-                    <td><button class="borrow-button" onclick="borrowBook({{ book.BID }})">Borrow</button></td>
+                    <td><button class="borrow-button" onclick="borrowBook({{ book[0] }})">Borrow</button></td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-
-    <script>
+<script>
+        // Function to handle the Borrow button click event
         function borrowBook(bookId) {
-            alert(`Borrowing book with ID: ${bookId}`);
-            // Here you could send an AJAX request to borrow the book
+            const userId = document.getElementById('UID').value;
+
+            if (!userId) {
+                alert("Please enter your UID.");
+                return;
+            }
+
+            // Send the POST request with UID and BID (book ID)
+            fetch('/borrow', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    UID: userId,
+                    BID: bookId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Book borrowed successfully!');
+                    // Optionally refresh the page or update the UI
+                } else {
+                    alert('Failed to borrow the book!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while borrowing the book.');
+            });
         }
     </script>
 </body>

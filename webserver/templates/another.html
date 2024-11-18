@@ -9,14 +9,19 @@
         .search-bar, .sort-options { margin: 20px 0; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 10px; border: 1px solid #ddd; }
-        .borrow-button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Library Query System Table: {{ name }}</h1>
+        <div class="navigation">
+            <a href="/">Home</a> |
+            <a href="/user_loan">user_loan</a> |
+            <a href="/study_room">study_room</a> |
+            <a href="/another">another</a>
+        </div>
         <!-- Search Form with Dropdowns for Search By and Sort By Options -->
-        <form class="search-bar" method="get" action="/another">
+        <form class="search-bar" method="POST" action="/another">
             <label for="search_by">Table name</label>
             <select id="search_by" name="search_by">
                 <option value="Users">Users</option>
@@ -49,7 +54,9 @@
                     {% for key in keys %}
                     <th>{{ key }}</th>
                     {% endfor %}
+
                 </tr>
+
             </thead>
             <tbody>
                 {% for book in data %}
@@ -63,11 +70,5 @@
         </table>
     </div>
 
-    <script>
-        function borrowBook(bookId) {
-            alert(`Borrowing book with ID: ${bookId}`);
-            // Here you could send an AJAX request to borrow the book
-        }
-    </script>
 </body>
 </html>
