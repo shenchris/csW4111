@@ -5,6 +5,7 @@ from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response, jsonify
 import traceback
 import click
+import random
 
 tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=tmpl_dir)
@@ -218,24 +219,47 @@ def book_study():
         RETURNING Booking_ID
         """
         # print(text(insert_query), parameters)
-        result = g.conn.execute(text(insert_query), parameters)
-        g.conn.commit()
-        Booking_ID = str(result.fetchone()[0])
+        try: 
+            result = g.conn.execute(text(insert_query), parameters)
+            g.conn.commit()
+            Booking_ID = str(result.fetchone()[0])
+            return f"""
+            <h1>Booking Successful!</h1>
+            <p>Your Booking_ID is: <strong>{Booking_ID}</strong></p>
+            <p>Your Booking_ID is from: <strong>{start}</strong> to <strong>{end}</strong> on <strong>{date}</strong> </p>
+            <a href="/study_room">Click here to return to the booking page</a>
+            """
+        except Exception as e:
+            print(f"Error: {e}")
+            return "There was an error booking the room. Please try again."
         return jsonify({f'success, id:{Booking_ID}': True})
+    
+    
 @app.route('/cancel_study', methods=['POST'])
 def cancel_study():
-    request_data = request.get_json()
-    booking_id = request_data['booking_id']
-
+    # Parse the incoming JSON data
     try:
-        query = f"DELETE FROM Book_Study_Room WHERE Booking_ID = {booking_id}"
-        g.conn.execute(text(query))
+        request_data = request.get_json()
+        booking_id = request_data['booking_id']
+
+        # Check if the booking exists
+        check_query = "SELECT COUNT(*) FROM Book_Study_Room WHERE Booking_ID = :booking_id"
+        check_result = g.conn.execute(text(check_query), {'booking_id': booking_id}).fetchone()
+
+        if check_result[0] == 0:
+            # Booking does not exist
+            return jsonify({'success': False, 'message': 'Booking ID does not exist'})
+
+        # Perform the delete query
+        delete_query = "DELETE FROM Book_Study_Room WHERE Booking_ID = :booking_id"
+        g.conn.execute(text(delete_query), {'booking_id': booking_id})
         g.conn.commit()
+
         return jsonify({'success': True})
 
     except Exception as e:
         print(f"Error: {e}")
-        return jsonify({'success': False})
+        return jsonify({'success': False, 'message': 'An error occurred while canceling the booking'})
 
 @app.route('/order', methods=['GET', 'POST'])
 def order():
@@ -319,6 +343,69 @@ def another():
 
     # Pass the data to the template
     return render_template('another.html', name=search_by, keys=keys, data=data)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        # Get data from the form
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+        user_type = request.form['user_type']
+
+        if user_type == 'Family':
+            family = 1
+            single = None
+        elif user_type == 'Single':
+            family = None
+            single = 1
+
+        email_check_query = "SELECT COUNT(*) FROM users WHERE email = :email"
+        email_check_result = g.conn.execute(text(email_check_query), {'email': email}).fetchone()
+        if email_check_result[0] > 0:
+            return """
+            <h1>Registration Failed</h1>
+            <p>The email address is already registered. Please use a different email.</p>
+            <a href="/register">Click here to try again</a>
+            <br>
+            <a href="/">Click here to return to the homepage</a>
+            """
+
+        # Generate a unique user ID
+        while True:
+            user_id = str(random.randint(0,1000)) # Generate User_ID
+            check_query = "SELECT COUNT(*) FROM users WHERE uid = :user_id"
+            result = g.conn.execute(text(check_query), {'user_id': user_id}).fetchone()
+            if result[0] == 0:  # If no user exists with this ID, break the loop
+                break
+
+        # Insert user into the database
+        insert_query = """
+        INSERT INTO users (uid, name, email, password, family, single)
+        VALUES (:user_id, :name, :email, :password, :family, :single)
+        """
+        parameters = {
+            'user_id': user_id,
+            'name': name,
+            'email': email,
+            'password' : password,
+            'family' : family,
+            'single' : single
+        }
+
+        try:
+            g.conn.execute(text(insert_query), parameters)
+            g.conn.commit()
+            return f"""
+            <h1>Registration Successful!</h1>
+            <p>Your User ID is: <strong>{user_id}</strong></p>
+            <a href="/">Click here to return to the homepage</a>
+            """
+        except Exception as e:
+            print(f"Error: {e}")
+            return "There was an error registering the user. Please try again."
+    else:
+        return render_template('register.html')
 
 
 if __name__ == "__main__":

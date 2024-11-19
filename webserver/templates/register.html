@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Library Query System</title>
+        <style>
+            .container { width: 80%; margin: 20px auto; }
+            .search-bar, .sort-options { margin: 20px 0; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 10px; border: 1px solid #ddd; }
+            .borrow-button { padding: 5px 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        </style>
+    </head>
+<body>
+    <div class="container">
+        <h1>Library Query System</h1>
+        <div class="navigation">
+            <a href="/">Home</a> |
+            <a href="/user_loan">user_loan</a> |
+            <a href="/study_room">study_room</a> |
+            <a href="/order">order</a> |
+            <a href="/another">another</a> |
+            <a href="/register">register</a>
+
+        </div>
+    
+        <!-- Registration Form -->
+        <h1>Register</h1>
+    <form action="/register" method="POST">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="password">Password:</label>
+        <input type="text" id="password" name="password" required><br><br>
+
+        <label for="user_type">User Type:</label><br>
+        <input type="radio" id="single" name="user_type" value="Single" required>
+        <label for="single">Single</label><br>
+        <input type="radio" id="family" name="user_type" value="Family" required>
+        <label for="family">Family</label><br><br>
+
+        <button type="submit">Register</button>
+    </form>
+    </div>
+    
+</body>
+</html>

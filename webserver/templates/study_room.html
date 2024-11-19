@@ -20,7 +20,8 @@
             <a href="/user_loan">user_loan</a> |
             <a href="/study_room">study_room</a> |
             <a href="/order">order</a> |
-            <a href="/another">another</a>
+            <a href="/another">another</a> |
+            <a href="/register">register</a>
         </div>
         <form class="search-bar" method="post" action="/book_study">
         <label for="UID">UID:</label>
@@ -65,31 +66,31 @@
 <script>
         // Function to handle the Borrow button click event
         function returnBook(booking_id) {
-
-            // Send the POST request with UID and BID (book ID)
-            fetch('/cancel_study', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    booking_id: booking_id,
-                })
+        // Send the POST request with UID and BID (booking ID)
+        fetch('/cancel_study', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                booking_id: booking_id,
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Book returned successfully!');
-                    // Optionally refresh the page or update the UI
-                } else {
-                    alert('Failed to returned the book!');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while returning the book.');
-            });
-        }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Booking canceled successfully!');
+                // Refresh the page to reflect the updated booking table
+                window.location.reload();
+            } else {
+                alert('Failed to cancel the booking!');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while canceling the booking.');
+        });
+    }
     </script>
 </body>
 </html>
