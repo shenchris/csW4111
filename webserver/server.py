@@ -174,7 +174,7 @@ def study_room():
     keys = []
     # uid = request.args.get('UID')
 
-    query = "select lid, room_number, uid, date,start_time,end_time from Study_Room, Book_Study_Room where Study_Room.RoomID = Book_Study_Room.RoomID"
+    query = "select lid, room_number,Study_Room.RoomID, uid, date,start_time,end_time from Study_Room, Book_Study_Room where Study_Room.RoomID = Book_Study_Room.RoomID"
 
     if request.method == 'POST':
         uid = request.form['UID']
